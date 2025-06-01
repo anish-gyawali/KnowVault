@@ -1,0 +1,14 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# VS Code
+.vscode/
+
+# Milvus volumes (large binary data)
+milvus/volumes/
+
+# OS files
+.DS_Store

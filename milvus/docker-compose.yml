@@ -1,0 +1,22 @@
+version: "3.5"
+services:
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.5
+    container_name: milvus-etcd
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+    volumes:
+      - ./volumes/etcd:/etcd
+    ports:
+      - "2379:2379"
+
+  milvus:
+    image: milvusdb/milvus:v2.3.4
+    container_name: milvus
+    command: ["milvus", "standalone"]
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - ./volumes/milvus:/var/lib/milvus
