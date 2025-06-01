@@ -1,15 +1,9 @@
 from fastapi import FastAPI, Query
-from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
-from pymilvus import connections, Collection
+from backend.milvus_client import get_milvus_collection, get_embedding_model
 
 app = FastAPI()
-
-# Connect to Milvus and load model
-connections.connect("default", host="localhost", port="19530")
-collection = Collection("doc_chunks")
-collection.load()
-model = SentenceTransformer("all-MiniLM-L6-v2")
+collection = get_milvus_collection()
+model = get_embedding_model()
 
 
 @app.get("/search")
