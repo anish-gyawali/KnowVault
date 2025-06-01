@@ -2,14 +2,6 @@
 
 KnowVault is a Retrieval-Augmented Generation (RAG) application in progress. This project sets up a local [Milvus](https://milvus.io) vector database using Docker and performs vector similarity search via Python (`pymilvus`).
 
-## ✅ Features (Completed So Far)
-
-- [x] Local Milvus setup via Docker (Milvus, Etcd, MinIO)
-- [x] Python connection using `pymilvus`
-- [x] Created `test_collection` for storing float vectors
-- [x] Inserted sample vectors and searched using similarity (L2)
-- [x] Persistent volume storage
-
 ## 🔧 Local Setup Instructions
 
 ### Prerequisites
