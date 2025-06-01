@@ -1,6 +1,6 @@
-from backend.milvus_client import get_milvus_collection, get_embedding_model
+from backend.milvus_client import get_or_create_collection, get_embedding_model
 
-collection = get_milvus_collection()
+collection = get_or_create_collection()
 model = get_embedding_model()
 
 

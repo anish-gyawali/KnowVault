@@ -1,11 +1,12 @@
+from sentence_transformers import SentenceTransformer
 from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType
+from backend.milvus_client import get_or_create_collection, get_embedding_model
 import hashlib
 
-from backend.milvus_client import get_milvus_collection, get_embedding_model
+collection = get_or_create_collection()
 
-collection = get_milvus_collection()
+# Step 2: Load embedding model
 model = get_embedding_model()
-
 
 # Step 3: Prepare a sample document
 document_text = """

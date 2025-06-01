@@ -69,11 +69,62 @@ Search results:
 
 ```
 KnowVault/
-├── milvus/                 # Docker-compose setup for Milvus
-│   └── volumes/            # Persisted Milvus data
-├── venv/                   # Python virtual environment (ignored in Git)
-├── milvus_test.py          # Milvus test script with dummy data
-├── requirements.txt        # Python dependencies
-├── .gitignore              # Git exclusions
-└── README.md               # This file
+├── backend/
+│   ├── __init__.py                
+│   ├── main.py                # FastAPI backend entry point
+│   └── milvus_client.py       # Reusable code to connect to Milvus and load embedding model
+│
+├── milvus/
+│   ├── docker-compose.yml     # Milvus standalone setup with Docker
+│   └── volumes/               # Persistent volumes for Milvus (etcd, minio, etc.)
+│
+├── venv/                      # Python virtual environment (should be in .gitignore)
+│
+├── doc_ingest.py              # Script to chunk, embed, and insert documents into Milvus
+├── query_doc.py               # Script to query embedded vectors from Milvus
+├── requirements.txt           # Python dependencies
+├── .gitignore                 # Git ignore file
+├── README.md                  # Project documentation
 ```
+---
+
+### 🔍 Inspecting Milvus Data with `milvus_cli`
+
+To explore the data inside Milvus using the CLI:
+
+#### ✅ Start the CLI
+
+```bash
+milvus_cli
+```
+
+#### ✅ Connect to your local Milvus instance
+
+```bash
+connect -uri tcp://127.0.0.1:19530
+```
+
+#### ✅ List all collections
+
+```bash
+list collections
+```
+
+#### ✅ Query data from a collection
+
+```bash
+query
+```
+
+Then follow the interactive prompts:
+
+```
+Collection name: doc_chunks
+The query expression: chunk_id != ''
+A list of fields to return (split by "," if multiple) []: chunk_id, content
+timeout []:
+Guarantee timestamp []:
+Graceful time []:
+```
+
+> 🔹 Just press `Enter` for the optional fields unless you're using advanced consistency settings.
