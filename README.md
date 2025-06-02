@@ -2,7 +2,7 @@
 
 KnowVault is a Retrieval-Augmented Generation (RAG) application in progress. This project sets up a local [Milvus](https://milvus.io) vector database using Docker and performs vector similarity search via Python (`pymilvus`).
 
-## 🔧 Local Setup Instructions
+## Local Setup Instructions
 
 ### Prerequisites
 
@@ -45,7 +45,7 @@ docker compose up -d
 
 ---
 
-### ✅ Test the Connection
+###  Test the Connection
 
 From the project root:
 
@@ -88,29 +88,29 @@ KnowVault/
 ```
 ---
 
-### 🔍 Inspecting Milvus Data with `milvus_cli`
+### Inspecting Milvus Data with `milvus_cli`
 
 To explore the data inside Milvus using the CLI:
 
-#### ✅ Start the CLI
+#### Start the CLI
 
 ```bash
 milvus_cli
 ```
 
-#### ✅ Connect to your local Milvus instance
+#### Connect to your local Milvus instance
 
 ```bash
 connect -uri tcp://127.0.0.1:19530
 ```
 
-#### ✅ List all collections
+#### List all collections
 
 ```bash
 list collections
 ```
 
-#### ✅ Query data from a collection
+#### Query data from a collection
 
 ```bash
 query
@@ -128,3 +128,9 @@ Graceful time []:
 ```
 
 > 🔹 Just press `Enter` for the optional fields unless you're using advanced consistency settings.
+
+#### Sceenshot:
+<img width="1439" alt="Screenshot 2025-06-02 at 12 44 02 PM" src="https://github.com/user-attachments/assets/dfef7369-ffaa-4fdb-9fd9-433074f36059" />
+<img width="1439" alt="Screenshot 2025-06-02 at 12 44 24 PM" src="https://github.com/user-attachments/assets/b9590711-f2be-4b92-846f-95611ff623ce" />
+
+
