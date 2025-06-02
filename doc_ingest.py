@@ -1,21 +1,30 @@
-from sentence_transformers import SentenceTransformer
-from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType
-from backend.milvus_client import get_or_create_collection, get_embedding_model
+import os
 import hashlib
+import fitz 
+from sentence_transformers import SentenceTransformer
+from pymilvus import connections, Collection, CollectionSchema, FieldSchema, DataType, utility
+from backend.milvus_client import get_or_create_collection, get_embedding_model
 
-collection = get_or_create_collection()
 
-# Step 2: Load embedding model
-model = get_embedding_model()
+# Read .txt and .pdf files
+def read_txt_file(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
 
-# Step 3: Prepare a sample document
-document_text = """
-Milvus is a high-performance vector database for embedding-based search and retrieval.
-It enables storing, indexing, and searching over billions of vector embeddings.
-This makes it useful in AI-powered apps like semantic search, recommendation engines, and RAG pipelines.
-"""
+def read_pdf_file(path):
+    doc = fitz.open(path)
+    return "\n".join(page.get_text() for page in doc)
 
-# Step 4: Chunk the document
+def read_document(path):
+    if path.endswith(".txt"):
+        return read_txt_file(path)
+    elif path.endswith(".pdf"):
+        return read_pdf_file(path)
+    else:
+        raise ValueError(f"Unsupported file type: {path}")
+
+
+# Chunk long text into smaller pieces
 def chunk_text(text, max_chars=200):
     sentences = text.strip().split('.')
     chunks = []
@@ -30,31 +39,33 @@ def chunk_text(text, max_chars=200):
         chunks.append(current.strip())
     return chunks
 
-chunks = chunk_text(document_text)
 
-# Step 5: Embed the chunks
-embeddings = model.encode(chunks)
-
-# Step 6: Define Milvus collection
+# Setup
 collection_name = "doc_chunks"
-fields = [
-    FieldSchema(name="chunk_id", dtype=DataType.VARCHAR, is_primary=True, max_length=64),
-    FieldSchema(name="content", dtype=DataType.VARCHAR, max_length=512),
-    FieldSchema(name="embedding", dtype=DataType.FLOAT_VECTOR, dim=384),
-]
-schema = CollectionSchema(fields, description="Document chunks")
-collection = Collection(name=collection_name, schema=schema)
+collection = get_or_create_collection()
+model = get_embedding_model()
 
-# Step 7: Create index
-collection.create_index("embedding", {
-    "index_type": "IVF_FLAT",
-    "metric_type": "L2",
-    "params": {"nlist": 1024}
-})
-print("Created doc_chunks collection and index")
+# Process documents in `documents/` folder
+doc_folder = "documents"
+all_chunks = []
+all_ids = []
 
-# Step 8: Insert data
-chunk_ids = [hashlib.md5(c.encode()).hexdigest()[:16] for c in chunks]
-collection.insert([chunk_ids, chunks, embeddings])
+for filename in os.listdir(doc_folder):
+    path = os.path.join(doc_folder, filename)
+    try:
+        content = read_document(path)
+        chunks = chunk_text(content)
+        embeddings = model.encode(chunks)
+
+        # Hash each chunk as ID
+        chunk_ids = [hashlib.md5((filename + c).encode()).hexdigest()[:16] for c in chunks]
+
+        collection.insert([chunk_ids, chunks, embeddings])
+        all_chunks.extend(chunks)
+        all_ids.extend(chunk_ids)
+        print(f"Ingested {len(chunks)} chunks from {filename}")
+    except Exception as e:
+        print(f"Failed to process {filename}: {e}")
+
 collection.load()
-print(f"Inserted {len(chunks)} chunks into Milvus")
+print(f"Finished ingesting {len(all_chunks)} chunks total.")

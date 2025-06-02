@@ -12,3 +12,5 @@ milvus/volumes/
 
 # OS files
 .DS_Store
+
+.env
